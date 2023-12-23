@@ -3,7 +3,7 @@
 ## Alunos
 
 - Gabriel Martins de Almeida - 190013371
-- Daniel Rodrigues Cardoso -
+- Daniel Rodrigues Cardoso - 190064064
 
 ## Ligando e Executando o Projeto
 
