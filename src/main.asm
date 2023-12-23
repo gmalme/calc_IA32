@@ -69,30 +69,41 @@ menu:
 Op_sum:
     call    gets
 	call	_sum
+    jc      Of_exit
     call    puts
 	jmp		menu
 Op_sub:
     call    gets
 	call	_sub
+    jc      Of_exit
     call    puts
 	jmp		menu
 Op_mul:
     call    gets
 	call	_mul
+    jc      Of_exit
     call    puts
 	jmp		menu
 Op_div:
     call    gets
 	call	_div
+    jc      Of_exit
     call    puts
 	jmp		menu
 Op_exp:
     call    gets
 	call	_exp
+    jc      Of_exit
     call    puts
 	jmp		menu
 Op_mod:
     call    gets
 	call	_mod
+    jc      Of_exit
     call    puts
 	jmp		menu
+
+Of_exit:
+    print msg_overflow
+    leave
+    call _exit
