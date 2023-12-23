@@ -28,7 +28,7 @@ section .text ; ################################# MAIN #########################
 
 global _start
 global precision, input_str, msg_input, msg_output ; # PUBLIC DATA
-extern _exit, _printstr, _readstr, puts, gets ; # Funcoes I/O
+extern _exit, _printstr, _readstr, _puts, _gets ; # Funcoes I/O
 extern _sum, _sub, _mul, _div, _exp, _mod ; # Funcoes Operacoes
 
 _start:
@@ -64,40 +64,40 @@ menu:
     call _exit
 
 Op_sum:
-    call    gets
+    call    _gets
 	call	_sum
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 Op_sub:
-    call    gets
+    call    _gets
 	call	_sub
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 Op_mul:
-    call    gets
+    call    _gets
 	call	_mul
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 Op_div:
-    call    gets
+    call    _gets
 	call	_div
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 Op_exp:
-    call    gets
+    call    _gets
 	call	_exp
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 Op_mod:
-    call    gets
+    call    _gets
 	call	_mod
     jc      Of_exit
-    call    puts
+    call    _puts
 	jmp		menu
 
 Of_exit:
