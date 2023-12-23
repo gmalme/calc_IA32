@@ -42,16 +42,12 @@ _start:
     read precision
     sub byte [precision], 0x30 
 
-    ; # logica 16 ou 32 bits
     enter 8,0
 
 menu:
     print msg_menu      ; # msg menu e le entrada
     read input_op
     sub byte [input_op], 0x30   ; # transforma de ASCII p/ inteiro
-
-    ; # logica 16 ou 32 bits
-    ; call menu16
 
     cmp byte [input_op], 1
     je Op_sum
