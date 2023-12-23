@@ -16,11 +16,8 @@ section .bss
     input_str resb 100 
 
 section .text ; ################################# MAIN #################################
-global _start
-global precision, input_str, msg_overflow, msg_input, msg_output ; # PUBLIC DATA
 
-extern _readstr, _printstr, _exit, readw, printw, readdw, printdw, puts, gets ; # sub, mul, div, exp, mod ; # Funcoes I/O
-extern _sum ; # Funcoes Operacoes
+section .text
 
 %macro print 1
         push %1
@@ -31,10 +28,15 @@ extern _sum ; # Funcoes Operacoes
         call _readstr
 %endmacro
 
+global _start
+global precision, input_str, msg_input, msg_output, msg_overflow ; # PUBLIC DATA
+
+extern _exit, _printstr, _readstr, puts, gets ; # sub, mul, div, exp, mod ; # Funcoes I/O
+extern _sum, _sub, _mul ; # Funcoes Operacoes
+
 _start:
     print msg_start     ; # pergunta o username
     read username
-
     print msg_hello     ; # msg hello e pergunta a precisão
     print username
     print msg_hello2
@@ -43,7 +45,6 @@ _start:
     sub byte [precision], 0x30 
 
     enter 8,0
-
 menu:
     print msg_menu      ; # msg menu e le entrada
     read input_op
@@ -51,12 +52,26 @@ menu:
 
     cmp byte [input_op], 1
     je Op_sum
+    cmp byte [input_op], 2
+    je Op_sub
+    cmp byte [input_op], 3
+    je Op_mul
 
     leave
     call _exit
 
 Op_sum:
-    call    gets  
+    call    gets
 	call	_sum
+    call    puts
+	jmp		menu
+Op_sub:
+    call    gets
+	call	_sub
+    call    puts
+	jmp		menu
+Op_mul:
+    call    gets
+	call	_mul
     call    puts
 	jmp		menu

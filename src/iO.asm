@@ -10,7 +10,7 @@ section .text
         call _readstr
 %endmacro
 
-global _readstr, _printstr, _exit, readw, printw, readdw, printdw, puts, gets  ; # readw, readdw, printw, printdw
+global _exit, _printstr, _readstr, puts, gets  ; # readw, readdw, printw, printdw
 
 extern precision, msg_input, msg_output, input_str
 
