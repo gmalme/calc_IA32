@@ -105,5 +105,4 @@ Op_mod:
 
 Of_exit:
     print msg_overflow
-    leave
-    call _exit
+    jmp menu
