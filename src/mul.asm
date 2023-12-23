@@ -13,7 +13,7 @@ mul16:
     enter 0,0 ; # Multiplica dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
 
     mov ax,[ebp+10]
-    mul word [ebp+8]
+    imul word [ebp+8]
     mov [ebp+8],ax
 
     leave
@@ -23,7 +23,7 @@ mul32:
     enter 0,0 ; # Multiplica dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
     mov eax,[ebp+12]
-    mul dword [ebp+8]
+    imul dword [ebp+8]
     mov [ebp+8],eax
 
     leave

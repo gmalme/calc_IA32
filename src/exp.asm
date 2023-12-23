@@ -12,12 +12,12 @@ _exp:
 exp16:
     enter 0,0 ; # Exponenciacao entre dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
 
-    mov cx,[ebp+8]
-    mov ax,[ebp+10]
+    mov word cx,[ebp+8]
+    mov word ax,[ebp+10]
     dec cx
 
 for16:
-    mul word [ebp+10]
+    imul word [ebp+10]
     loop for16
     mov [ebp+8],ax
 
@@ -27,12 +27,12 @@ for16:
 exp32:
     enter 0,0 ; # Exponenciacao entre dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
-    mov ecx,[ebp+8]
-    mov eax,[ebp+12]
+    mov dword ecx,[ebp+8]
+    mov dword eax,[ebp+12]
     dec ecx
 
 for32:
-    mul dword [ebp+12]
+    imul dword [ebp+12]
     loop for32
     mov [ebp+8],eax
 
