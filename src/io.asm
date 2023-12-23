@@ -123,7 +123,7 @@ strlen_lp:  inc eax
             pop ebp
             ret 4
 
-readw:     enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta para onde o numero será salvo
+readw:      enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta para onde o numero será salvo
             push ebx
             push ecx
             push edx
@@ -134,40 +134,29 @@ readw:     enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta para
             mov edx, 100
             int 80h
             
-            ; coloca a quantidade de bytes lidos em esi
-            mov esi, eax
+            mov esi, eax ; coloca a quantidade de bytes lidos em esi
             dec esi
-            ; zera ax
             sub ax, ax
-            ; coloca 10 em ebx
             mov bx, 10
-            ; verifica se primeiro caractere eh um '-'
-            cmp byte [ecx], '-'
+
+            
+            cmp byte [ecx], '-' ; verifica se primeiro caractere eh um '-'
             jne readw_for
-            ; se for um '-', pula ele
             inc ecx
             dec esi
-readw_for:  ; multiplica ax por 10
-            mul bx
-            
-            ; coloca o ascii do caractere em dx
+readw_for:  mul bx ; # converte caracteres p/ valor numérico de 16 bits 
             movzx dx, byte [ecx]
-            ; transforma dx em inteiro
             sub dx, 0x30
-            ; soma dx a ax
             add ax, dx
-            
             inc ecx
             dec esi
-            ; se esi = 0, acaba o loop
             jnz readw_for
 
-            ; se tiver - no comeco, inverte o resultado
-            mov ecx, [ebp+8]
-            cmp byte [ecx], '-'
+            mov ecx, [ebp+8] 
+            cmp byte [ecx], '-' ; se for - inverte o sinal
             jne readw_end
             neg ax
-readw_end: pop edx
+readw_end:  pop edx
             pop ecx
             pop ebx
             
@@ -182,52 +171,37 @@ printw:    enter 0,0
             push ecx
             push edx
 
-            ; empilha 0, que representa o final da string
-            ; o desempilhamento eh do ultimo pro primeiro, por isso empilhamos o 0 primeiro
-            push word 0
+            push word 0 ; empilha 0
             
             mov ax, [ebp+12]
             mov cx, 10
             cmp ax, 0
             jge printw_cv_loop
             
-            ; inverte o numero se ele for negativo (necessario para o resto nao ser negativo)
-            neg ax
-            ; loop que converte o inteiro para caracteres (adiciona cada caractere a pilha)
-printw_cv_loop:
-            ; extende o sinal de eax para edx
+            neg ax ; inverte o numero se ele for negativo
+printw_cv_loop: ; # loop que converte o inteiro para caracteres
             cwd
-            ; divide edx:eax por 10
             idiv cx
-            ; converte o resto em caractere ascii
             add dx, 0x30
-            ; coloca o caractere na pilha
-            push dx
-            ; se o quociente for 0, sai do loop
+            push dx ; coloca o caractere na pilha
             cmp ax, 0
             jne printw_cv_loop
 
-            cmp word [ebp+12], 0
+            cmp word [ebp+12], 0 ; coloca ponteiro da string auxiliar em ebx
             jge printw_gz
-            ; adiciona o caractere '-' na pilha se o numero for negativo
             push word '-'
-            ; coloca ponteiro da string auxiliar em ebx
-printw_gz: mov ebx, [ebp+8]
-            ; loop que constroe a string, desempilhando os caracteres
-printw_sb_loop:
-            ; desempilha o caractere
+printw_gz: 
+            mov ebx, [ebp+8]
+printw_sb_loop:  ; # desempilha os caracteres
             pop ax
-            ; coloca o caractere na posicao da string
             mov [ebx], al
-            ; incrementa a posicao
             inc ebx
-            ; se chegar no final da string, sair do loop
             cmp ax, 0
             jne printw_sb_loop
 
-            ; chama printstr com o resultado
             push dword [ebp+8]
             call _printstr
+
 
             ; resgata os valores dos registradores utilizados da pilha
             pop edx
@@ -248,36 +222,25 @@ readdw:     enter 0,0
             mov edx, 100
             int 80h
             
-            ; coloca a quantidade de bytes lidos em esi
             mov esi, eax
             dec esi
-            ; zera eax
             sub eax, eax
-            ; coloca 10 em ebx
             mov ebx, 10
-            ; verifica se primeiro caractere eh um '-'
-            cmp byte [ecx], '-'
+
+            cmp byte [ecx], '-' ; verifica se primeiro caractere eh um '-'
             jne readdw_lp
-            ; se for um '-', pula ele
             inc ecx
             dec esi
-readdw_lp:  ; multiplica eax por 10
-            mul ebx
-            
-            ; coloca o ascii do caractere em edx
+readdw_lp:  mul ebx ; multiplica eax por 10
             movzx edx, byte [ecx]
-            ; transforma edx em inteiro
             sub edx, 0x30
-            ; soma edx a eax
             add eax, edx
             
             inc ecx
             dec esi
-            ; se esi = 0, acaba o loop
             jnz readdw_lp
 
-            ; se tiver - no comeco, inverte o resultado
-            mov ecx, [ebp+8]
+            mov ecx, [ebp+8] ; se for - inverte o resultado
             cmp byte [ecx], '-'
             jne readdw_end
             neg eax
@@ -290,60 +253,42 @@ readdw_end: pop edx
             ret 4
 
 printdw:    enter 0,0
-            ; guarda os valores dos registradores utilizados na pilha
             push eax
             push ebx
             push ecx
             push edx
 
-            ; empilha 0, que representa o final da string
-            ; o desempilhamento eh do ultimo pro primeiro, por isso empilhamos o 0 primeiro
-            push 0
+            push 0 ; empilha 0, que representa o final da string
             
             mov eax, [ebp+12]
             mov ecx, 10
             cmp eax, 0
             jge printdw_cv_loop
-            
-            ; inverte o numero se ele for negativo (necessario para o resto nao ser negativo)
-            neg eax
-            ; loop que converte o inteiro para caracteres (adiciona cada caractere a pilha)
-printdw_cv_loop:
-            ; extende o sinal de eax para edx
+            neg eax  nverte o numero se ele for negativo
+
+printdw_cv_loop:             ; converte o inteiro para caracteres e adiciona na pilha
             cdq
-            ; divide edx:eax por 10
             idiv ecx
-            ; converte o resto em caractere ascii
             add edx, 0x30
-            ; coloca o caractere na pilha
-            push edx
-            ; se o quociente for 0, sai do loop
+            push edx ; coloca o caractere na pilha
+
             cmp eax, 0
             jne printdw_cv_loop
 
-            cmp dword [ebp+12], 0
+            cmp dword [ebp+12], 0 ; adiciona o caractere '-' na pilha se o numero for negativo
             jge printdw_gz
-            ; adiciona o caractere '-' na pilha se o numero for negativo
             push '-'
-            ; coloca ponteiro da string auxiliar em ebx
 printdw_gz: mov ebx, [ebp+8]
-            ; loop que constroe a string, desempilhando os caracteres
-printdw_sb_loop:
-            ; desempilha o caractere
+printdw_sb_loop: ; loop que constroe a string, desempilhando os caracteres
             pop eax
-            ; coloca o caractere na posicao da string
             mov [ebx], al
-            ; incrementa a posicao
             inc ebx
-            ; se chegar no final da string, sair do loop
             cmp eax, 0
             jne printdw_sb_loop
 
-            ; chama printstr com o resultado
             push dword [ebp+8]
             call _printstr
 
-            ; resgata os valores dos registradores utilizados da pilha
             pop edx
             pop ecx
             pop ebx
