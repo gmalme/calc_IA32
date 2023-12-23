@@ -1,6 +1,18 @@
 ; ################################# I/O #################################
 section .text
-global _readstr, _printstr, _exit, read16, print16, read32, print32,  ; # read16, read32, print16, print32,
+
+%macro print 1
+        push %1
+        call _printstr
+%endmacro
+%macro read 1
+        push %1
+        call _readstr
+%endmacro
+
+global _readstr, _printstr, _exit, readw, printw, readdw, printdw, puts, gets  ; # readw, readdw, printw, printdw
+
+extern precision, msg_input, msg_output, input_str
 
 _readstr:    enter 0,0      ; # Le uma string e salva em um endereco | ([ebp+8]) = ptr que aponta para onde salvar a string
             push eax
@@ -49,7 +61,7 @@ _printstr:  enter 0,0      ; # Mostra uma string | ([ebp+8]) = ptr que aponta pa
             pop ebp
             ret 4
 
-read16:     enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta para onde o numero será salvo
+readw:     enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta para onde o numero será salvo
             push ebx
             push ecx
             push edx
@@ -69,11 +81,11 @@ read16:     enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta par
             mov bx, 10
             ; verifica se primeiro caractere eh um '-'
             cmp byte [ecx], '-'
-            jne read16_lp
+            jne readw_for
             ; se for um '-', pula ele
             inc ecx
             dec esi
-read16_lp:  ; multiplica ax por 10
+readw_for:  ; multiplica ax por 10
             mul bx
             
             ; coloca o ascii do caractere em dx
@@ -86,14 +98,14 @@ read16_lp:  ; multiplica ax por 10
             inc ecx
             dec esi
             ; se esi = 0, acaba o loop
-            jnz read16_lp
+            jnz readw_for
 
             ; se tiver - no comeco, inverte o resultado
             mov ecx, [ebp+8]
             cmp byte [ecx], '-'
-            jne read16_end
+            jne readw_end
             neg ax
-read16_end: pop edx
+readw_end: pop edx
             pop ecx
             pop ebx
             
@@ -101,7 +113,7 @@ read16_end: pop edx
             pop ebp
             ret 4
 
-print16:    enter 0,0
+printw:    enter 0,0
             ; guarda os valores dos registradores utilizados na pilha
             push eax
             push ebx
@@ -115,12 +127,12 @@ print16:    enter 0,0
             mov ax, [ebp+12]
             mov cx, 10
             cmp ax, 0
-            jge print16_cv_loop
+            jge printw_cv_loop
             
             ; inverte o numero se ele for negativo (necessario para o resto nao ser negativo)
             neg ax
             ; loop que converte o inteiro para caracteres (adiciona cada caractere a pilha)
-print16_cv_loop:
+printw_cv_loop:
             ; extende o sinal de eax para edx
             cwd
             ; divide edx:eax por 10
@@ -131,16 +143,16 @@ print16_cv_loop:
             push dx
             ; se o quociente for 0, sai do loop
             cmp ax, 0
-            jne print16_cv_loop
+            jne printw_cv_loop
 
             cmp word [ebp+12], 0
-            jge print16_gz
+            jge printw_gz
             ; adiciona o caractere '-' na pilha se o numero for negativo
             push word '-'
             ; coloca ponteiro da string auxiliar em ebx
-print16_gz: mov ebx, [ebp+8]
+printw_gz: mov ebx, [ebp+8]
             ; loop que constroe a string, desempilhando os caracteres
-print16_sb_loop:
+printw_sb_loop:
             ; desempilha o caractere
             pop ax
             ; coloca o caractere na posicao da string
@@ -149,7 +161,7 @@ print16_sb_loop:
             inc ebx
             ; se chegar no final da string, sair do loop
             cmp ax, 0
-            jne print16_sb_loop
+            jne printw_sb_loop
 
             ; chama printstr com o resultado
             push dword [ebp+8]
@@ -163,7 +175,7 @@ print16_sb_loop:
             mov esp, ebp
             pop ebp
             ret 6
-print32:    enter 0,0
+printdw:    enter 0,0
             ; guarda os valores dos registradores utilizados na pilha
             push eax
             push ebx
@@ -177,12 +189,12 @@ print32:    enter 0,0
             mov eax, [ebp+12]
             mov ecx, 10
             cmp eax, 0
-            jge print32_cv_loop
+            jge printdw_cv_loop
             
             ; inverte o numero se ele for negativo (necessario para o resto nao ser negativo)
             neg eax
             ; loop que converte o inteiro para caracteres (adiciona cada caractere a pilha)
-print32_cv_loop:
+printdw_cv_loop:
             ; extende o sinal de eax para edx
             cdq
             ; divide edx:eax por 10
@@ -193,16 +205,16 @@ print32_cv_loop:
             push edx
             ; se o quociente for 0, sai do loop
             cmp eax, 0
-            jne print32_cv_loop
+            jne printdw_cv_loop
 
             cmp dword [ebp+12], 0
-            jge print32_gz
+            jge printdw_gz
             ; adiciona o caractere '-' na pilha se o numero for negativo
             push '-'
             ; coloca ponteiro da string auxiliar em ebx
-print32_gz: mov ebx, [ebp+8]
+printdw_gz: mov ebx, [ebp+8]
             ; loop que constroe a string, desempilhando os caracteres
-print32_sb_loop:
+printdw_sb_loop:
             ; desempilha o caractere
             pop eax
             ; coloca o caractere na posicao da string
@@ -211,7 +223,7 @@ print32_sb_loop:
             inc ebx
             ; se chegar no final da string, sair do loop
             cmp eax, 0
-            jne print32_sb_loop
+            jne printdw_sb_loop
 
             ; chama printstr com o resultado
             push dword [ebp+8]
@@ -226,7 +238,7 @@ print32_sb_loop:
             pop ebp
             ret 8
 
-read32:     enter 0,0
+readdw:     enter 0,0
             push ebx
             push ecx
             push edx
@@ -246,11 +258,11 @@ read32:     enter 0,0
             mov ebx, 10
             ; verifica se primeiro caractere eh um '-'
             cmp byte [ecx], '-'
-            jne read32_lp
+            jne readdw_lp
             ; se for um '-', pula ele
             inc ecx
             dec esi
-read32_lp:  ; multiplica eax por 10
+readdw_lp:  ; multiplica eax por 10
             mul ebx
             
             ; coloca o ascii do caractere em edx
@@ -263,20 +275,73 @@ read32_lp:  ; multiplica eax por 10
             inc ecx
             dec esi
             ; se esi = 0, acaba o loop
-            jnz read32_lp
+            jnz readdw_lp
 
             ; se tiver - no comeco, inverte o resultado
             mov ecx, [ebp+8]
             cmp byte [ecx], '-'
-            jne read32_end
+            jne readdw_end
             neg eax
-read32_end: pop edx
+readdw_end: pop edx
             pop ecx
             pop ebx
             
             mov esp, ebp
             pop ebp
             ret 4
+gets:
+    cmp byte [precision], 1
+    je gets32
+    enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    print msg_input
+    push input_str
+    call readw
+    mov [ebp+10],ax
+
+    print msg_input
+    push input_str
+    call readw
+    mov [ebp+8],ax
+    ;push ax
+
+    leave
+    ret
+gets32:
+    enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    print msg_input
+    push input_str
+    call readdw
+    mov [ebp+12],eax
+
+    print msg_input
+    push input_str
+    call readdw
+    mov [ebp+8],eax
+
+    leave
+    ret
+
+puts:
+    enter 0,0
+    print   msg_output
+
+    cmp byte [precision], 1
+    je puts32
+
+    push word [ebp+8]
+    push input_str
+    call printw
+
+    jmp print_end
+
+puts32:
+    push dword [ebp+8]
+    push input_str
+    call printdw
+
+print_end:
+    leave
+    ret
 
 _exit:      mov eax, 1
             mov ebx, 0
