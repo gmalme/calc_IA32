@@ -1,15 +1,6 @@
 ; ################################# I/O #################################
 section .text
 
-%macro print 1
-        push %1
-        call _printstr
-%endmacro
-%macro read 1
-        push %1
-        call _readstr
-%endmacro
-
 ; ################################# Public Functions #################################
 global _exit, _readstr, _printstr, _gets, _puts
 extern precision, msg_input, msg_output, input_str
@@ -47,59 +38,59 @@ _printstr:  enter 0,0      ; # Mostra uma string | ([ebp+8]) = ptr que aponta pa
             mov esp, ebp
             pop ebp
             ret 4
-_gets:
-    cmp byte [precision], 1
-    je gets32
-    enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
-    print msg_input
-    push input_str
-    call readw
-    mov [ebp+10],ax
+_gets:                      ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+            cmp byte [precision], 1
+            je gets32
+            enter 0,0 
+            print msg_input
+            push input_str
+            call readw
+            mov [ebp+10],ax
 
-    print msg_input
-    push input_str
-    call readw
-    mov [ebp+8],ax
-    ;push ax
+            print msg_input
+            push input_str
+            call readw
+            mov [ebp+8],ax
+            ;push ax
 
-    leave
-    ret
-gets32:
-    enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
-    print msg_input
-    push input_str
-    call readdw
-    mov [ebp+12],eax
+            leave
+            ret
 
-    print msg_input
-    push input_str
-    call readdw
-    mov [ebp+8],eax
+gets32:     enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+            print msg_input
+            push input_str
+            call readdw
+            mov [ebp+12],eax
 
-    leave
-    ret
+            print msg_input
+            push input_str
+            call readdw
+            mov [ebp+8],eax
 
-_puts:
-    enter 0,0
-    print   msg_output
+            leave
+            ret
 
-    cmp byte [precision], 1
-    je puts32
+_puts:                  ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+            enter 0,0
+            print   msg_output
 
-    push word [ebp+8]
-    push input_str
-    call printw
+            cmp byte [precision], 1
+            je puts32
 
-    jmp puts_end
+            push word [ebp+8]
+            push input_str
+            call printw
 
-puts32:
-    push dword [ebp+8]
-    push input_str
-    call printdw
+            jmp puts_end
+
+puts32:             ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+            push dword [ebp+8]
+            push input_str
+            call printdw
 
 puts_end:
-    leave
-    ret
+            leave
+            ret
 
 _exit:      mov eax, 1
             mov ebx, 0
@@ -144,7 +135,8 @@ readw:      enter 0,0       ; # Mostra um int de 16bits | ([ebp+8]) = aponta par
             jne readw_for
             inc ecx
             dec esi
-readw_for:  mul bx ; # converte caracteres p/ valor numérico de 16 bits 
+
+readw_for:  mul bx          ; # converte caracteres p/ valor numérico de 16 bits 
             movzx dx, byte [ecx]
             sub dx, 0x30
             add ax, dx
@@ -156,6 +148,7 @@ readw_for:  mul bx ; # converte caracteres p/ valor numérico de 16 bits
             cmp byte [ecx], '-' ; se for - inverte o sinal
             jne readw_end
             neg ax
+
 readw_end:  pop edx
             pop ecx
             pop ebx
@@ -164,8 +157,7 @@ readw_end:  pop edx
             pop ebp
             ret 4
 
-printw:    enter 0,0
-            ; guarda os valores dos registradores utilizados na pilha
+printw:     enter 0,0         ; # printa uma word | ([ebp+12]) = ptr que aponta para onde a string esta
             push eax
             push ebx
             push ecx
@@ -179,7 +171,8 @@ printw:    enter 0,0
             jge printw_cv_loop
             
             neg ax ; inverte o numero se ele for negativo
-printw_cv_loop: ; # loop que converte o inteiro para caracteres
+
+printw_cv_loop:               ; # loop que converte o inteiro para caracteres
             cwd
             idiv cx
             add dx, 0x30
@@ -190,8 +183,8 @@ printw_cv_loop: ; # loop que converte o inteiro para caracteres
             cmp word [ebp+12], 0 ; coloca ponteiro da string auxiliar em ebx
             jge printw_gz
             push word '-'
-printw_gz: 
-            mov ebx, [ebp+8]
+printw_gz: mov ebx, [ebp+8]
+
 printw_sb_loop:  ; # desempilha os caracteres
             pop ax
             mov [ebx], al
@@ -211,7 +204,8 @@ printw_sb_loop:  ; # desempilha os caracteres
             mov esp, ebp
             pop ebp
             ret 6
-readdw:     enter 0,0
+
+readdw:     enter 0,0       ; # Le uma word | ([ebp+8]) = ptr que aponta para onde a string esta
             push ebx
             push ecx
             push edx
@@ -231,6 +225,7 @@ readdw:     enter 0,0
             jne readdw_lp
             inc ecx
             dec esi
+
 readdw_lp:  mul ebx ; multiplica eax por 10
             movzx edx, byte [ecx]
             sub edx, 0x30
@@ -244,6 +239,7 @@ readdw_lp:  mul ebx ; multiplica eax por 10
             cmp byte [ecx], '-'
             jne readdw_end
             neg eax
+
 readdw_end: pop edx
             pop ecx
             pop ebx
@@ -252,7 +248,7 @@ readdw_end: pop edx
             pop ebp
             ret 4
 
-printdw:    enter 0,0
+printdw:    enter 0,0       ; # printa uma double word | ([ebp+12]) = ptr que aponta para onde a string esta
             push eax
             push ebx
             push ecx
@@ -278,7 +274,9 @@ printdw_cv_loop:             ; converte o inteiro para caracteres e adiciona na 
             cmp dword [ebp+12], 0 ; adiciona o caractere '-' na pilha se o numero for negativo
             jge printdw_gz
             push '-'
+
 printdw_gz: mov ebx, [ebp+8]
+
 printdw_sb_loop: ; loop que constroe a string, desempilhando os caracteres
             pop eax
             mov [ebx], al
@@ -297,3 +295,14 @@ printdw_sb_loop: ; loop que constroe a string, desempilhando os caracteres
             pop ebp
             ret 8
 
+; Macros utilizadas para facilitar a compreensao do codigo 
+; (mesmo nao estando na especificacao do trabalho optamos por utilizar para facilitar o processo de desenvolvimento)
+%macro  print 1
+        push %1
+        call _printstr
+%endmacro
+
+%macro  read 1
+        push %1
+        call _readstr
+%endmacro
