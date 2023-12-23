@@ -10,7 +10,7 @@ _sub:
     jmp sub32
 
 sub16:
-    enter 0,0 ; # Soma dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    enter 0,0 ; # Subtrai dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
 
     mov eax,[ebp+10]
     sub eax,[ebp+8]
@@ -20,7 +20,7 @@ sub16:
     ret
 
 sub32:
-    enter 0,0 ; # oma dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+    enter 0,0 ; # Subtrai dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
     mov eax,[ebp+12]
     sub eax,[ebp+8]

@@ -10,7 +10,7 @@ _mul:
     jmp mul32
 
 mul16:
-    enter 0,0 ; # Soma dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    enter 0,0 ; # Multiplica dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
 
     mov ax,[ebp+10]
     mul word [ebp+8]
@@ -20,7 +20,7 @@ mul16:
     ret
 
 mul32:
-    enter 0,0 ; # oma dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+    enter 0,0 ; # Multiplica dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
     mov eax,[ebp+12]
     mul dword [ebp+8]

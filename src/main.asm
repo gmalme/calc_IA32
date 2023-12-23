@@ -17,8 +17,6 @@ section .bss
 
 section .text ; ################################# MAIN #################################
 
-section .text
-
 %macro print 1
         push %1
         call _printstr
@@ -29,8 +27,7 @@ section .text
 %endmacro
 
 global _start
-global precision, input_str, msg_input, msg_output, msg_overflow ; # PUBLIC DATA
-
+global precision, input_str, msg_input, msg_output ; # PUBLIC DATA
 extern _exit, _printstr, _readstr, puts, gets ; # Funcoes I/O
 extern _sum, _sub, _mul, _div, _exp, _mod ; # Funcoes Operacoes
 

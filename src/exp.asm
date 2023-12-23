@@ -10,7 +10,7 @@ _exp:
     jmp exp32
 
 exp16:
-    enter 0,0 ; # Soma dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    enter 0,0 ; # Exponenciacao entre dois inteiros 16 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
 
     mov cx,[ebp+8]
     mov ax,[ebp+10]
@@ -25,7 +25,7 @@ for16:
     ret
 
 exp32:
-    enter 0,0 ; # oma dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+    enter 0,0 ; # Exponenciacao entre dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
     mov ecx,[ebp+8]
     mov eax,[ebp+12]

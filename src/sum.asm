@@ -19,7 +19,7 @@ sum16:
     ret
 
 sum32:
-    enter 0,0 ; # oma dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
+    enter 0,0 ; # Soma dois inteiros 32 bits | ([ebp+8]) = ptr para armazenar a str, ([ebp+12]) = ptr para armazenar a str
 
     mov eax,[ebp+12]
     add [ebp+8],eax
