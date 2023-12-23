@@ -19,7 +19,7 @@ section .text ; ################################# MAIN #########################
 global _start
 global precision, input_str, msg_overflow, msg_input, msg_output ; # PUBLIC DATA
 
-extern _readstr, _printstr, _exit, read16, print16 ; # sub, mul, div, exp, mod ; # Funcoes I/O
+extern _readstr, _printstr, _exit, read16, print16, read32, print32 ; # sub, mul, div, exp, mod ; # Funcoes I/O
 extern _sum ; # Funcoes Operacoes
 
 %macro print 1
@@ -43,7 +43,7 @@ _start:
     sub byte [precision], 0x30 
 
     ; # logica 16 ou 32 bits
-    enter 4,0
+    enter 8,0
 
 menu:
     print msg_menu      ; # msg menu e le entrada
@@ -60,6 +60,8 @@ menu:
     call _exit
 
 menu16:
+    cmp byte [precision], 1
+    je menu32
     enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
     print msg_input
     push input_str
@@ -74,16 +76,42 @@ menu16:
 
     leave
     ret
+menu32:
+    enter 0,0 ; # Mostra uma string | ([ebp+8]) = ptr para armazenar a str, ([ebp+10]) = ptr para armazenar a str
+    print msg_input
+    push input_str
+    call read32
+    mov [ebp+12],eax
+
+    print msg_input
+    push input_str
+    call read32
+    mov [ebp+8],eax
+
+    leave
+    ret
 
 
 
 print_result:
     enter 0,0
     print   msg_output
+
+    cmp byte [precision], 1
+    je print_result32
+
     push word [ebp+8]
     push input_str
     call print16
 
+    jmp print_end
+
+print_result32:
+    push dword [ebp+8]
+    push input_str
+    call print32
+
+print_end:
     leave
     ret
 
