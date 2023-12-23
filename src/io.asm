@@ -1,5 +1,16 @@
 ; ################################# I/O #################################
 section .text
+; Macros utilizadas para facilitar a compreensao do codigo 
+; (mesmo nao estando na especificacao do trabalho optamos por utilizar para facilitar o processo de desenvolvimento)
+%macro  print 1
+        push %1
+        call _printstr
+%endmacro
+
+%macro  read 1
+        push %1
+        call _readstr
+%endmacro
 
 ; ################################# Public Functions #################################
 global _exit, _readstr, _printstr, _gets, _puts
@@ -260,7 +271,7 @@ printdw:    enter 0,0       ; # printa uma double word | ([ebp+12]) = ptr que ap
             mov ecx, 10
             cmp eax, 0
             jge printdw_cv_loop
-            neg eax  nverte o numero se ele for negativo
+            neg eax  ;inverte o numero se ele for negativo
 
 printdw_cv_loop:             ; converte o inteiro para caracteres e adiciona na pilha
             cdq
@@ -295,14 +306,4 @@ printdw_sb_loop: ; loop que constroe a string, desempilhando os caracteres
             pop ebp
             ret 8
 
-; Macros utilizadas para facilitar a compreensao do codigo 
-; (mesmo nao estando na especificacao do trabalho optamos por utilizar para facilitar o processo de desenvolvimento)
-%macro  print 1
-        push %1
-        call _printstr
-%endmacro
 
-%macro  read 1
-        push %1
-        call _readstr
-%endmacro

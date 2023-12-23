@@ -66,37 +66,37 @@ menu:
 Op_sum:
     call    _gets
 	call	_sum
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 Op_sub:
     call    _gets
 	call	_sub
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 Op_mul:
     call    _gets
 	call	_mul
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 Op_div:
     call    _gets
 	call	_div
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 Op_exp:
     call    _gets
 	call	_exp
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 Op_mod:
     call    _gets
 	call	_mod
-    jc      Of_exit
+    jo      Of_exit
     call    _puts
 	jmp		menu
 
